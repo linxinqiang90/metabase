@@ -16,9 +16,9 @@ const MetabaseAnalytics = {
       const { tag } = MetabaseSettings.get("version");
 
       // $FlowFixMe
-      ga("set", "dimension1", tag);
-      ga("set", "page", url);
-      ga("send", "pageview", url);
+      // ga("set", "dimension1", tag);
+      // ga("set", "page", url);
+      // ga("send", "pageview", url);
     }
   },
 
@@ -34,8 +34,8 @@ const MetabaseAnalytics = {
     // category & action are required, rest are optional
     if (category && action) {
       // $FlowFixMe
-      ga("set", "dimension1", tag);
-      ga("send", "event", category, action, label, value);
+      // ga("set", "dimension1", tag);
+      // ga("send", "event", category, action, label, value);
     }
     if (DEBUG) {
       console.log("trackEvent", { category, action, label, value });
