@@ -295,7 +295,16 @@ export default class Navbar extends Component {
             >
               <Button medium>{t`Ask a question`}</Button>
             </Link>
+
           )}
+          <Link
+            to="/public/share"
+            mx={2}
+            target="_blank"
+            className="hide sm-show"
+          >
+            <Button medium>{t`Share List`}</Button>
+          </Link>
           <EntityMenu
             tooltip={t`Create`}
             className="hide sm-show"

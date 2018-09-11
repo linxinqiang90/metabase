@@ -17,9 +17,7 @@ export default class Calendar extends Component {
     super(props);
 
     this.state = {
-      current: moment(props.initial || undefined),
-      hours:0,
-      minutes:0
+      current: moment(props.initial || undefined)
     };
   }
 
@@ -68,19 +66,22 @@ export default class Calendar extends Component {
   }
 
   onClickDay = date => {
+
+    date = moment(date).hours(this.state.current.hours()).minutes(this.state.current.minutes());
+
     let { selected, selectedEnd, isRangePicker } = this.props;
     if (!isRangePicker || !selected || selectedEnd) {
-      this.props.onChange(date.hours(this.state.hours).minutes(this.state.minutes).format("YYYY-MM-DD HH:mm:ss"), null);
+      this.props.onChange(date.format("YYYY-MM-DD HH:mm:ss"), null);
     } else if (!selectedEnd) {
       if (date.isAfter(selected)) {
         this.props.onChange(
-          selected.format("YYYY-MM-DD"),
-          date.hours(this.state.hours).minutes(this.state.minutes).format("YYYY-MM-DD HH:mm:ss"),
+          selected.format("YYYY-MM-DD HH:mm:ss"),
+          date.format("YYYY-MM-DD HH:mm:ss"),
         );
       } else {
         this.props.onChange(
-          date.hours(this.state.hours).minutes(this.state.minutes).format("YYYY-MM-DD HH:mm:ss"),
-          selected.format("YYYY-MM-DD"),
+          date.format("YYYY-MM-DD HH:mm:ss"),
+          selected.format("YYYY-MM-DD HH:mm:ss"),
         );
       }
     }
@@ -164,31 +165,31 @@ export default class Calendar extends Component {
   }
 
   setMinutes(value) {
-    this.setState({minutes: value});
+    this.setState({current: moment(this.state.current).minutes(value)});
   }
 
   setHours(value) {
-    this.setState({hours: value});
+    this.setState({current: moment(this.state.current).hours(value)});
   }
 
   setChange(){
-    this.props.onChange(this.state.current.hours(this.state.hours).minutes(this.state.minutes).format("YYYY-MM-DD HH:mm:ss"), null);
+    this.props.onChange(this.state.current.format("YYYY-MM-DD HH:mm:ss"), null);
   }
 
   renderTime(value) {
-    console.info(value);
+    const {selected} = this.props;
     let hours = [],minutes=[];
     for(let i = 0;i<24;i++){
-        hours.push(<option value={i} key={i}>Hours({i})</option>);
+        hours.push(<option value={i} key={"hours"+i}>Hours({i})</option>);
     }
     for(let i = 0;i<60;i++){
-      minutes.push(<option value={i} key={i}>Minutes({i})</option>);
+      minutes.push(<option value={i} key={"minutes"+i}>Minutes({i})</option>);
     }
 
     return (<div className="Calendar-header flex align-center" style={{paddingTop:"5px"}}>
       <select
         key="hours"
-        value={this.state.hours}
+        defaultValue={selected?moment(selected).hour():value.hour()}
         className="bg-white"
         style={{marginRight:"10px !important",width:"50%",height:"30px"}}
         onChange={e => this.setHours(e.target.value)}
@@ -198,7 +199,7 @@ export default class Calendar extends Component {
       </select>
       <select
         key="minutes"
-        value={this.state.minutes}
+        defaultValue={selected?moment(selected).minute():value.minute()}
         className="bg-white"
         style={{marginRight:"10px !important",width:"50%",height:"30px"}}
         onChange={e => this.setMinutes(e.target.value)}
