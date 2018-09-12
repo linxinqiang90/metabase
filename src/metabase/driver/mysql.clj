@@ -155,10 +155,10 @@
       ;; after the query is compiled. Hopefully situtations where that happens are rare; at any rate it's probably
       ;; preferable to have timezones slightly wrong in these rare theoretical situations, instead of all the time, as
       ;; was the previous behavior.
-      (hsql/call :convert_tz
-        date-literal-or-string
-        (hx/literal system-timezone-offset-str)
-        (hx/literal report-timezone-offset-str))
+;      (hsql/call :convert_tz
+;        date-literal-or-string
+;        (hx/literal system-timezone-offset-str)
+;        (hx/literal report-timezone-offset-str))
       ;; otherwise if we don't have a report timezone we can continue to pass the object as-is, e.g. as a prepared
       ;; statement param
       date-obj)))
