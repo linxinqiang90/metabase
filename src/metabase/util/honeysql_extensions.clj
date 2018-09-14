@@ -139,7 +139,7 @@
   [x decimal-places]
   (hsql/call :round x decimal-places))
 
-(defn ->date                     "CAST X to a `date`."                     [x] (cast :date x))
+(defn ->date                     "CAST X to a `date`."                     [x] (cast :datetime x))
 (defn ->datetime                 "CAST X to a `datetime`."                 [x] (cast :datetime x))
 (defn ->timestamp                "CAST X to a `timestamp`."                [x] (cast :timestamp x))
 (defn ->timestamp-with-time-zone "CAST X to a `timestamp with time zone`." [x] (cast "timestamp with time zone" x))
