@@ -1,21 +1,26 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-
+import DatePicker, { getDateTimeFieldTarget } from "../query_builder/components/filters/pickers/DatePicker";
+import HoursMinutesInput from "../query_builder/components/filters/pickers/HoursMinutesInput";
 import "./Calendar.css";
-
 import cx from "classnames";
 import moment from "moment";
 import { t } from "c-3po";
 import Icon from "metabase/components/Icon";
-
+import SelectButton from "metabase/components/SelectButton";
+import { option } from "metabase/components/Select";
+import Select from "metabase/components/Select";
+const DATE_FORMAT = "YYYY-MM-DD";
+const DATE_TIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
 export default class Calendar extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      current: moment(props.initial || undefined),
+      current: moment(props.initial || undefined)
     };
   }
+
 
   static propTypes = {
     selected: PropTypes.object,
@@ -61,19 +66,22 @@ export default class Calendar extends Component {
   }
 
   onClickDay = date => {
+
+    date = moment(date).hours(this.state.current.hours()).minutes(this.state.current.minutes());
+
     let { selected, selectedEnd, isRangePicker } = this.props;
     if (!isRangePicker || !selected || selectedEnd) {
-      this.props.onChange(date.format("YYYY-MM-DD"), null);
+      this.props.onChange(date.format("YYYY-MM-DD HH:mm:ss"), null);
     } else if (!selectedEnd) {
       if (date.isAfter(selected)) {
         this.props.onChange(
-          selected.format("YYYY-MM-DD"),
-          date.format("YYYY-MM-DD"),
+          selected.format("YYYY-MM-DD HH:mm:ss"),
+          date.format("YYYY-MM-DD HH:mm:ss"),
         );
       } else {
         this.props.onChange(
-          date.format("YYYY-MM-DD"),
-          selected.format("YYYY-MM-DD"),
+          date.format("YYYY-MM-DD HH:mm:ss"),
+          selected.format("YYYY-MM-DD HH:mm:ss"),
         );
       }
     }
@@ -95,20 +103,20 @@ export default class Calendar extends Component {
             className="bordered rounded p1 cursor-pointer transition-border border-hover px1"
             onClick={this.previous}
           >
-            <Icon name="chevronleft" size={10} />
+            <Icon name="chevronleft" size={10}/>
           </div>
         )}
-        <span className="flex-full" />
+        <span className="flex-full"/>
         <h4 className="cursor-pointer rounded p1">
           {current.format("MMMM YYYY")}
         </h4>
-        <span className="flex-full" />
+        <span className="flex-full"/>
         {side !== "left" && (
           <div
             className="bordered border-hover rounded p1 transition-border cursor-pointer px1"
             onClick={this.next}
           >
-            <Icon name="chevronright" size={10} />
+            <Icon name="chevronright" size={10}/>
           </div>
         )}
       </div>
@@ -156,6 +164,53 @@ export default class Calendar extends Component {
     return <div className="Calendar-weeks relative">{weeks}</div>;
   }
 
+  setMinutes(value) {
+    this.setState({current: moment(this.state.current).minutes(value)});
+  }
+
+  setHours(value) {
+    this.setState({current: moment(this.state.current).hours(value)});
+  }
+
+  setChange(){
+    this.props.onChange(this.state.current.format("YYYY-MM-DD HH:mm:ss"), null);
+  }
+
+  renderTime(value) {
+    const {selected} = this.props;
+    let hours = [],minutes=[];
+    for(let i = 0;i<24;i++){
+        hours.push(<option value={i} key={"hours"+i}>Hours({i})</option>);
+    }
+    for(let i = 0;i<60;i++){
+      minutes.push(<option value={i} key={"minutes"+i}>Minutes({i})</option>);
+    }
+
+    return (<div className="Calendar-header flex align-center" style={{paddingTop:"5px"}}>
+      <select
+        key="hours"
+        defaultValue={selected?moment(selected).hour():value.hour()}
+        className="bg-white"
+        style={{marginRight:"10px !important",width:"50%",height:"30px"}}
+        onChange={e => this.setHours(e.target.value)}
+        height={300}
+      >
+        {hours}
+      </select>
+      <select
+        key="minutes"
+        defaultValue={selected?moment(selected).minute():value.minute()}
+        className="bg-white"
+        style={{marginRight:"10px !important",width:"50%",height:"30px"}}
+        onChange={e => this.setMinutes(e.target.value)}
+        height={300}
+      >
+        {minutes}
+      </select>
+      <button key="ok" className="bg-white" onClick={e => this.setChange()} style={{height:"30px",paddingLeft:"10px",paddingRight:"10px",backgroundColor:"rgb(169, 169, 169)"}}>Ok</button>
+    </div>);
+  }
+
   renderCalender(current, side) {
     return (
       <div
@@ -166,6 +221,7 @@ export default class Calendar extends Component {
         {this.renderMonthHeader(current, side)}
         {this.renderDayNames(current)}
         {this.renderWeeks(current)}
+        {this.renderTime(current)}
       </div>
     );
   }

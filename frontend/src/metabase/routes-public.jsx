@@ -8,6 +8,7 @@ import PublicNotFound from "metabase/public/components/PublicNotFound";
 
 import PublicApp from "metabase/public/containers/PublicApp.jsx";
 import PublicQuestion from "metabase/public/containers/PublicQuestion.jsx";
+import PublicShareApp from "metabase/public/containers/PublicShareApp.jsx";
 import PublicDashboard from "metabase/public/containers/PublicDashboard.jsx";
 
 export const getRoutes = store => (
@@ -15,6 +16,7 @@ export const getRoutes = store => (
     <Route path="public" component={PublicApp}>
       <Route path="question/:uuid" component={PublicQuestion} />
       <Route path="dashboard/:uuid" component={PublicDashboard} />
+      <Route path="share" component={PublicShareApp} />
       <Route path="*" component={PublicNotFound} />
     </Route>
     <Route path="*" component={PublicNotFound} />
