@@ -140,8 +140,8 @@
   (let [date-as-dt                 (tcoerce/from-date date-obj)
         report-timezone-offset-str (timezone-id->offset-str (driver/report-timezone) date-as-dt)
         system-timezone-offset-str (system-timezone->offset-str date-as-dt)]
-    (if (and report-timezone-offset-str
-             (not= report-timezone-offset-str system-timezone-offset-str))
+    (if (and system-timezone-offset-str
+             (not= system-timezone-offset-str system-timezone-offset-str))
       ;; if we have a report timezone we want to generate SQL like convert_tz('2004-01-01T12:00:00','-8:00','-2:00')
       ;; to convert our timestamp from system timezone -> report timezone.
       ;; See https://dev.mysql.com/doc/refman/5.7/en/date-and-time-functions.html#function_convert-tz
@@ -158,7 +158,7 @@
       (hsql/call :convert_tz
         date-literal-or-string
         (hx/literal system-timezone-offset-str)
-        (hx/literal report-timezone-offset-str))
+        (hx/literal system-timezone-offset-str))
       ;; otherwise if we don't have a report timezone we can continue to pass the object as-is, e.g. as a prepared
       ;; statement param
       date-obj)))
